@@ -99,12 +99,14 @@ namespace puzzler
 
     void LogDebug(const char *str, ...)
     {
+      #ifndef NDEBUG
       if(Log_Debug <= m_logLevel){
         va_list args;
         va_start(args,str);
         vLog(Log_Debug, str, args);
         va_end(args);
       }
+      #endif
     }
 
 
