@@ -4,6 +4,7 @@
 #include "user_circuit_timing.hpp"
 #include "user_matrix_exponent.hpp"
 #include "user_brute_force.hpp"
+#include "user_life.hpp"
 
 
 void puzzler::PuzzleRegistrar::UserRegisterPuzzles()
@@ -11,6 +12,7 @@ void puzzler::PuzzleRegistrar::UserRegisterPuzzles()
   Register(std::make_shared<CircuitTimingProvider>());
   Register(std::make_shared<MatrixExponentProvider>());
   Register(std::make_shared<BruteForceProvider>());
+  Register(std::make_shared<LifeProvider>());
 }
 
 

@@ -31,9 +31,9 @@ namespace puzzler{
     {
       uint32_t raw=htonl(x);
       if(m_sending){
-	m_pStream->Send(4, &raw);
+        m_pStream->Send(4, &raw);
       }else{
-	m_pStream->Recv(4, &raw);
+        m_pStream->Recv(4, &raw);
       }
       x=ntohl(raw);
       return *this;
@@ -60,8 +60,8 @@ namespace puzzler{
       // I'm aware of. The only other portable way I can think of is
       // to use frexp/ldexp and encode as explicit parts.
       union{
-	double d64;
-	uint64_t u64;
+        double d64;
+        uint64_t u64;
       }u;
       u.d64=x;
       SendOrRecv(u.u64);
@@ -75,11 +75,11 @@ namespace puzzler{
       uint32_t len=x.size();
       SendOrRecv(len);
       if(m_sending){
-	m_pStream->Send(len, x.data());
+        m_pStream->Send(len, x.data());
       }else{
-	std::vector<char> tmp(len);
-	m_pStream->Recv(len, &tmp[0]);
-	x.assign(tmp.begin(), tmp.end());
+        std::vector<char> tmp(len);
+        m_pStream->Recv(len, &tmp[0]);
+        x.assign(tmp.begin(), tmp.end());
       }
       return *this;
     }
@@ -130,6 +130,19 @@ namespace puzzler{
       return *this;
     }
 
+    PersistContext &SendOrRecv(std::vector<uint8_t> &x)
+    {
+      uint32_t n=x.size();
+      SendOrRecv(n);
+      x.resize(n);
+      if(m_sending){
+        m_pStream->Send(x.size(), &x[0]);
+      }else{
+        m_pStream->Recv(x.size(), &x[0]);
+      }
+      return *this;
+    }
+    
     template<class T>
     PersistContext &SendOrRecv(std::vector<T> &x)
     {
