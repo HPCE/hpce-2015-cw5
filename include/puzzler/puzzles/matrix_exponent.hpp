@@ -43,8 +43,8 @@ namespace puzzler
       return res;
     }
 
-    
-  
+
+
     uint32_t n;
     uint32_t steps;
     uint32_t seed;
@@ -109,7 +109,7 @@ namespace puzzler
     : public PuzzleBase<MatrixExponentInput,MatrixExponentOutput>
   {
   protected:
-    
+
     static uint32_t Mul(uint32_t a, uint32_t b)
     {
       uint64_t tmp=a*b;
@@ -145,7 +145,7 @@ namespace puzzler
       }
       return res;
     }
-    
+
     static uint32_t MatrixWeight(unsigned n, std::vector<uint32_t> a)
     {
       uint32_t res=0;
@@ -156,9 +156,13 @@ namespace puzzler
         }
       }
       return res;
-    }  
-  
-    
+    }
+
+    virtual void Execute(
+         ILog *log,
+         const MatrixExponentInput *input,
+         MatrixExponentOutput *output
+         ) const =0;
 
     void ReferenceExecute(
 			  ILog *log,
