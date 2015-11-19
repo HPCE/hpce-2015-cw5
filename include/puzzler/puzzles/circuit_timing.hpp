@@ -85,21 +85,21 @@ namespace puzzler
       }
       return 1+(unsigned)ceil(log(inputs)/log(2.0));
     }
-  
+
     unsigned delay(unsigned src, const CircuitTimingInput *input) const
     {
       unsigned inputDelay, logicDelay, outputDelay;
-      
+
       if(src < input->flipFlopCount){
         inputDelay=0; // No input delay for flip-flip
         logicDelay=0; // No logic for flip-flop
         outputDelay=fanout_delay(src, input); // Need to get value of flip-flop to all places it is used
       }else{
         unsigned base=src + (src - input->flipFlopCount); // There are two inputs per nand gate
-        
+
         unsigned leftDelay=delay(input->wires.at(base), input);
         unsigned rightDelay=delay(input->wires.at(base+1), input);
-        
+
         inputDelay=std::max(leftDelay,rightDelay); // Input delay is worse of two inputs
         logicDelay=1; // Each gate takes 1 time unit
         outputDelay=fanout_delay(src, input); // Need to get from output of nand gate to all places it is used
@@ -122,16 +122,18 @@ namespace puzzler
 			  ) const
     {
       log->LogVerbose("Starting timing analysis");
-      
+
       std::map<unsigned,unsigned> histogram;
-      
+
       for(unsigned i=0; i<pInput->flipFlopCount; i++){
-        unsigned got=delay(i, pInput);
+        // BREAKING-CHANGE, originally:
+        // unsigned got=delay(i, pInput);
+        unsigned got=delay(pInput->wires.at(i), pInput);
         histogram[got]++;
       }
-      
+
       log->LogVerbose("Finished timing analysis, converting histogram");
-      
+
       // We have a map from delay->count, but this may be sparse (some
       // delays may not exist). So we convert to a dense representation
       std::vector<uint32_t> res(histogram.rbegin()->first+1, 0);
@@ -141,9 +143,9 @@ namespace puzzler
         }
         log->LogInfo(" histogram[%u] = %u", i, res[i]);
       }
-      
+
       pOutput->criticalPathHistogram=res;
-      
+
       log->LogVerbose("Finished converting histogram");
     }
 
