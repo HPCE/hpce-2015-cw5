@@ -4,6 +4,8 @@ CPPFLAGS += -std=c++11 -W -Wall  -g
 CPPFLAGS += -O3
 CPPFLAGS += -I include
 
+LDLIBS += -lrt
+
 lib/libpuzzler.a : provider/*.cpp provider/*.hpp
 	cd provider && $(MAKE) all
 
