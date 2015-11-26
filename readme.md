@@ -13,7 +13,11 @@ goal of making things faster. For our purposes,
 faster means the wall-clock execution time of
 `puzzler::Puzzle::Execute`, across a broad spectrum
 of scale factors. The target platform is an
-AWS GPU (g2.2xlarge) instance.
+AWS GPU (g2.2xlarge) instance, and the target AMI
+will be the public HPCE-2015-v2 AMI. The AMI has
+OpenCL GPU and software providers installed, alongside
+TBB. You can determine the location of headers and
+libraries by starting up the AMI.
 
 Meta-specification
 ------------------
@@ -85,6 +89,10 @@ Deliverable format
     
     - **Note**: If you do something complicated in your building of libpuzzler, it should still be
       possible to build it by going into `lib` and calling `make all`.
+
+    - The current working directory during execution will be the root of the repository. So
+      it will be executed as if typing `bin/execute_puzzle`, and an opencl kernel could be
+      loaded using the relative path `provider/something.kernel`.
       
 - The programs in `src` have no special meaning or status, they are just example programs 
 
@@ -92,3 +100,26 @@ The reason for all this strange indirection is that I want to give
 maximum freedom for you to do strange things within your implementation
 (example definitions of "strange" include CMake) while still having a clean
 abstraction layer between your code and the client code.
+
+Intermediate Testing
+--------------------
+
+As mentioned, I'm occasionally pulling and running tests on all the repositories, and
+pushing the results back. These tests do _not_ check for correctness, they only check
+that the implementations build and run correctly (are also for my own interest
+in seeing how performance evolves over time) I will push the results into
+the `dt10_runs` directory.
+
+If you are interested in seeing comparitive performance results, you can opt in
+by commiting a file called `dt10_runs/count_me_in`. This will result in graphs with
+lines for your implementation versus others who also opted in, but you will only be able
+to identify your line on the graph graph.
+
+We had some discussion on how to pick which version to pull. I have decided
+that I will just pull from master, as this reflects better working practise - if
+there is a testing branch, then that is where the unstable code should
+be. The master branch should ideally always be compilable and correct, and
+branches only merged into master once they are stable.
+
+Finally, to re-iterate: the tests I am doing do _no_ testing at all for correctness, they
+don't even look at the output of the tests.
